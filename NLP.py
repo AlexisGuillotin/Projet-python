@@ -2,10 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
-import streamlit as st
-from streamlit.logger import get_logger
 from sklearn.decomposition import TruncatedSVD
-import altair as alt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import f1_score, confusion_matrix
@@ -27,8 +24,6 @@ final_stopwords_list = stopwords.words('french')
 tfidf_vectorizer = TfidfVectorizer(max_df=max_df, min_df=min_df, max_features=max_features, stop_words=final_stopwords_list, ngram_range=ngram_range)
 tfidf = tfidf_vectorizer.fit_transform(samples)
 feature_names = tfidf_vectorizer.get_feature_names()
-# Title.
-st.sidebar.header("Constructing dictonary of words.")
 # Upper bound for tf-idf value.
 max_df = 0.3
 # Lower bound for tf-idf value.
@@ -53,7 +48,6 @@ classifier = clf.fit(tfidf, labels)
 forest = classifier.best_estimator_
 feature_importances = forest.feature_importances_
 indices = np.argsort(feature_importances)[::-1]
-st.sidebar.header("Customizing the model.")
 n_estimators = 1000
 max_leaf_nodes = 25
 max_depth = 5
