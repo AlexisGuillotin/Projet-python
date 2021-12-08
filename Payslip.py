@@ -1,36 +1,9 @@
-import re
 from pdf2image import convert_from_path, convert_from_bytes
 import pytesseract
-import fasttext
 import os
 import numpy as np
 from cv2 import cv2
-from PIL import Image
-from pytesseract.pytesseract import Output
-from skimage import color
 from skimage import io
-import enchant
-from enchant.checker import SpellChecker
-from sklearn.pipeline import Pipeline
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.ensemble import (RandomForestClassifier, ExtraTreesClassifier,AdaBoostClassifier)
-from sklearn.model_selection import train_test_split
-from keras.preprocessing.text import Tokenizer
-import Orange
-import pickle
-import time
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.linear_model import LinearRegression
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neural_network import MLPClassifier
-from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score, f1_score
-from sklearn.model_selection import cross_validate
-from sklearn.model_selection import KFold
 
 def get_grayscale(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
