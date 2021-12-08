@@ -23,12 +23,13 @@ Dans un premier temps, nous nous concentrons sur la préparation de notre datase
 
 - python
   - sklearn
+  - numpy
+  - pandas
   - pdf2image
   - pytesseract
-  - numpy
+  - os
   - cv2
-  - PIL
-  - pandas
+  - skimage
 
 ## Installation
 Pour cloner le dossier sur votre machine :
