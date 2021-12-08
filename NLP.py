@@ -10,7 +10,7 @@ from nltk.corpus import stopwords
 
 enc = LabelEncoder()
 # Load data.
-data = pd.read_csv("mtsamples.csv", index_col=0, usecols=[0,1,2,4])
+data = pd.read_csv("data_final.csv", index_col=0, usecols=[0,1,2,4])
 data = data.dropna()
 samples = data.transcription
 text_labels  = [label_name.lower() for label_name in data.medical_specialty]
