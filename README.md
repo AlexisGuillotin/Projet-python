@@ -30,6 +30,7 @@ Dans un premier temps, nous nous concentrons sur la préparation de notre datase
   - os
   - cv2
   - skimage
+  - nltk
 
 ## Installation
 Pour cloner le dossier sur votre machine :
