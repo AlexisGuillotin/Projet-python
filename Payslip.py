@@ -124,7 +124,7 @@ def payslip(compte, salaire):
     for char in bag:
         salaire_net=salaire_net.replace(char,'')
     print("\t\tSALAIRE NET: "+salaire_net)
-
+    
     #RECHERCHE DU SALAIRE NET DANS LE RELEVÉ DE COMPTE BANQUAIRE:
     fraude = True
     for page in list_traite_compte:
@@ -139,8 +139,6 @@ def payslip(compte, salaire):
     if fraude == True:
         print("\tSUSPICION DE FRAUDE : pas de virement qui correspond au montant inscrit sur la fiche de paie.")
         return 0
-
-    #PART IA
 
 for i in range(len(releves)):
     print("Vérification n° "+ str(i+1) )
