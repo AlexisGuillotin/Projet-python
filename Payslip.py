@@ -39,78 +39,109 @@ def get_grayscale(image):
 list_traite_compte = []
 list_traite_salaire = []
 
-#ATTENTION ! chemin à mofidier suivant l'arborescence.
-compte = "releve compte 1"
-salaire = "bulletin salaire 3 - fraude"
+path_dir=os.getcwd()
 
-##ouvrir un pdf pour extraire le texte du compte
-#print("Lecture du fichier "+compte+"...")
-#with open("dossier_compte/"+compte+".pdf",'rb') as pdf:
-#       filename =compte
-#       #Question
-#       images = convert_from_bytes(pdf.read(),500,use_pdftocairo=True, strict=False)
-#       tmp = 0
-#       for image in images:
-#                if not os.path.exists('out/'+filename+'/'):
-#                    os.makedirs('out/'+filename+'/')
-#                image.save('out/'+filename+'/'+str(filename)+str(tmp)+'.png', 'PNG')
-#                src = io.imread("out/"+filename+"/"+str(filename)+str(tmp)+".png")
-#                #Question 3
-#                image_gray = get_grayscale(src)
-#                #Question 4
-#                custom_config = r'--oem 3 --psm 6'
-#                result_txt = pytesseract.image_to_string(image_gray, config=custom_config)
-#                list_traite_compte.append(result_txt)
-#                pdf.close()
-#                tmp+=1
+#ATTENTION ! chemins à modifier/créer suivant l'arborescence.
+    #Dossier des bulletins de salaire
+path_salaire=path_dir+'/dossier_salaire2/'
+bulletins=os.listdir(path_salaire)
+    #Dossier des relevés de compte
+path_compte=path_dir+'/dossier_compte2/'
+releves=os.listdir(path_compte)
+    #On ordonne les listes
+releves.sort()
+bulletins.sort()
 
-print("Lecture du fichier "+salaire+"...")
-with open("dossier_salaire/"+salaire+".pdf",'rb') as pdf:
-       filename =salaire
-       #Question
-       images = convert_from_bytes(pdf.read(),500,use_pdftocairo=True, strict=False)
-       tmp = 0
-       for image in images:
-                if not os.path.exists('out/'+filename+'/'):
-                    os.makedirs('out/'+filename+'/')
-                image.save('out/'+filename+'/'+str(filename)+str(tmp)+'.png', 'PNG')
-                src = io.imread("out/"+filename+"/"+str(filename)+str(tmp)+".png")
-                #Question 3
-                image_gray = get_grayscale(src)
-                #Question 4
-                custom_config = r'--oem 3 --psm 6'
-                result_txt = pytesseract.image_to_string(image_gray, config=custom_config)
-                list_traite_salaire.append(result_txt)
-                with open("out/output.txt",'w') as output:
-                    output.write(str(result_txt))
-                pdf.close()
-                tmp+=1
-output.close()
+#DÉTERMINE SI LE TIERS À FRAUDER EN FONCTION DE SON BULLETIN DE SALAIRE ET DE SON RELEVÉ DE COMPTE:
+def payslip(compte, salaire):
 
+    compte=compte.replace('.pdf','')
+    salaire=salaire.replace('.pdf','')
+    
+    #Ouverture du pdf pour extraire le texte du Relevé Compte
+    print("\tLecture de "+compte+"...")
+    with open(path_compte+compte+".pdf",'rb') as pdf:
+           filename =compte
+           
+           images = convert_from_bytes(pdf.read(),500,use_pdftocairo=True, strict=False)
+           tmp = 0
+           for image in images:
+                    if not os.path.exists('out/'+filename+'/'):
+                        os.makedirs('out/'+filename+'/')
+                    image.save('out/'+filename+'/'+str(filename)+str(tmp)+'.png', 'PNG')
+                    src = io.imread("out/"+filename+"/"+str(filename)+str(tmp)+".png")
+                    #Question 3
+                    image_gray = get_grayscale(src)
+                    #Question 4
+                    custom_config = r'--oem 3 --psm 6'
+                    result_txt = pytesseract.image_to_string(image_gray, config=custom_config)
+                    list_traite_compte.append(result_txt)
+                    pdf.close()
+                    tmp+=1
+        #Récupérer le salaire net du Bulletin de Salaire
+    words = str(list_traite_compte[len(list_traite_compte)-1])
+    lines = words.split("\n")
+    """
+    for line in lines:
+        if "SALAIRE" in line:
+            print ("\t\tSALAIRE BULLETIN : " +line)
+    """
+    #Ouverture du pdf pour extraire le texte du Bulletin de Salaire
+    print("\tLecture de "+salaire+"...")
+    with open(path_salaire+salaire+".pdf",'rb') as pdf:
+        filename =salaire
+        #Question
+        images = convert_from_path(path_salaire+salaire+".pdf",500,use_pdftocairo=True, strict=False)
+        tmp = 0
+        for image in images:
+                    if not os.path.exists('out/'+filename+'/'):
+                        os.makedirs('out/'+filename+'/')
+                    image.save('out/'+filename+'/'+str(filename)+str(tmp)+'.png', 'PNG')
+                    src = io.imread("out/"+filename+"/"+str(filename)+str(tmp)+".png")
+                    #Question 3
+                    image_gray = get_grayscale(src)
+                    #Question 4
+                    custom_config = r'--oem 3 --psm 6'
+                    result_txt = pytesseract.image_to_string(image_gray, config=custom_config)
+                    list_traite_salaire.append(result_txt)
+                    with open("out/output.txt",'w') as output:
+                        output.write(str(result_txt))
+                    pdf.close()
+                    tmp+=1
+    output.close()
 
-#TODO UTILISER FASTTEXT C'EST UNE BETTE D'IDEE MON POTE
+        #Récupérer le salaire net de la fiche de paie
+    words = str(list_traite_salaire[len(list_traite_salaire)-1])
+    lines = words.split("\n")
+    """
+    for line in lines:
+        print(line)
+        if "NET PAYÉ" in line:
+            print ("TROUVE ! " +line)
+    """
+    salaire_net = words[len(words)-14:len(words)-6]
+    bag=['\'', '\"', '<', '>', '«', '-', '_','(',')','~','&','*','/',';']
+    for char in bag:
+        salaire_net=salaire_net.replace(char,'')
+    print("\t\tSALAIRE NET: "+salaire_net)
 
-#Récupérer le salaire net de la fiche de paie
-words = str(list_traite_salaire[len(list_traite_salaire)-1])
-lines = words.split("\n")
-for line in lines:
-    print(line)
-    if "NET PAYÉ" in line:
-        print ("TROUVE ! " +line)
-salaire_net = words[len(words)-14:len(words)-6]
-#print("Salaire net : "+salaire_net)
+    #RECHERCHE DU SALAIRE NET DANS LE RELEVÉ DE COMPTE BANQUAIRE:
+    fraude = True
+    for page in list_traite_compte:
+        if salaire_net in page:
+            print("\tCORRESPONDANCE : Il y a bien un virement qui correspond au montant affiché sur le buletin de salaire.")
+            fraude = False
+            return 1
+        elif salaire_net.replace('.',',') in page:
+            print("\tCORRESPONDANCE : Il y a bien un virement qui correspond au montant affiché sur le buletin de salaire.")
+            fraude = False
+            return 1
+    if fraude == True:
+        print("\tSUSPICION DE FRAUDE : pas de virement qui correspond au montant inscrit sur la fiche de paie.")
+        return 0
 
-#Relevé de compte
-fraude = True
-for page in list_traite_compte:
-    if salaire_net in page:
-        print("Il y a bien un virement qui correspond au montant affiché sur le buletin de salaire.")
-        fraude = False
-    elif salaire_net.replace('.',',') in page:
-        print("Il y a bien un virement qui correspond au montant affiché sur le buletin de salaire.")
-        fraude = False
-if fraude == True:
-    print("ATTENTION ! Il n'y a pas de virement qui correspond au montant inscrit sur la fiche de paie.")
+    #PART IA
 
-#PART IA
-
+for i in range(len(releves)):
+    print("Vérification n° "+ str(i+1) )
+    payslip(releves[i],bulletins[i])
